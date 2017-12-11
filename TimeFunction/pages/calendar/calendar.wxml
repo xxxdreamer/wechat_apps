@@ -1,0 +1,86 @@
+<view class="calendar-root">
+    <view class="calendar-navbar">
+        <view class="calendar-navbar-button" bindtap="goToday" hover="true" hover-class="view-hover">今日</view>
+        <view class="calendar-navbar-button" bindtap="goLastMonth" hover="true" hover-class="view-hover">{{"<"}}</view>
+        <view class="calendar-navbar-date">{{dateData.date}}</view>
+        <view class="calendar-navbar-button" bindtap="goNextMonth" hover="true" hover-class="view-hover">{{">"}}</view>
+        <picker class="calendar-navbar-button" mode="date" start="1900-01-01" end="2100-01-01" bindchange="bindDateChange">
+            <view hover="true" hover-class="view-hover">跳转</view>
+        </picker>
+    </view>
+    <view class="calendar-head">
+        <view wx:for="一二三四五六日" wx:key="*this">{{item}}</view>
+    </view>
+    <view class="calendar-body">
+        <view class="calendar-body-rows" wx:for="{{ dateData.rowNum }}" wx:for-index="row" wx:key="*this">
+            <view class="calendar-body-cols" wx:for="1234567" wx:for-index="col" wx:key="*this">
+                <view class="calendar-body-item" hover="true" hover-class="view-hover" data-day-index="{{row * 7 + col}}" bindtap="selectDay">
+                    <view hidden="{{!dateData.arrIsShow[row * 7 + col]}}">
+                        <view class="calendar-body-day">
+                            {{dateData.arrDays[row * 7 + col]}}
+                        </view>
+                        <view class="calendar-body-dayex">
+                            {{dateData.arrInfoExShow[row * 7 + col]}}
+                        </view>
+                    </view>
+                </view>
+            </view>
+        </view>
+    </view>
+    <view class="calendar-detail">
+        <view class="calendar-detail-day">{{detailData.curDay}}</view>
+        <view class="calendar-detail-info1">{{detailData.curInfo1}}</view>
+        <view class="calendar-detail-info2">{{detailData.curInfo2}}</view>
+    </view>
+
+    <form bindsubmit="formSubmit" bindreset="formReset">
+ <view class="input-wrap">    
+      <input type="text" value='{{todoData.newLi.content}}' returnKeyType='send' placeholder="请输入待做的事" class="ipt-main"  bindinput='iptChange' />     
+      <view class="flex-row flex-time" wx:if="{{todoData.newLi.content}}">
+            <picker mode='time' start="{{todoData.newLi.begin}}" end="23:59" value='{{todoData.newLi.begin}}' bindchange='beginTime'  class="pick-time time">
+                <text>
+                    开始时间：{{todoData.newLi.begin}}
+                </text>
+            </picker>             
+            <label class="time"><switch class="switch" checked bindchange="switch1Change" />提醒</label>
+        </view>
+        <view class="flex-row" wx:if="{{todoData.newLi.content}}">        
+          <button class="btn btn-submit" formType="submit" hover-class="btn-hover">提交</button>
+          <button class="btn btn-cancel" formType="reset">清空</button>
+       </view>
+  </view>
+  </form>
+  <view class="list-wrap" wx:if="{{todoData.lists.length>0}}">
+    <view wx:for="{{todoData.lists}}" wx:key="{{done}}" wx:if="{{todoData.showAll ||(!todoData.showAll && !item.done)}}" id="{{item.id}}" class="{{item.done?'done list':'list'}}">        
+        <text>{{index+1}}:</text>
+        <text data-id ="{{item.id}}"  class="cnt" bindtap="toChange" >{{item.content}}</text>
+        <view hidden="{{!item.editing}}" class="edit-wrap">
+            <input class="ipt-edit" value="{{item.content}}"  data-id="{{item.id}}" bindinput='iptEdit' />
+            <button class="btn btn-edit" data-id="{{index}}" bindtap="saveEdit">修改</button>
+        </view>
+        
+        <text class="time"> {{item.begin}}</text>
+        <icon class="ico-done" bindtap="setDone" data-id="{{item.id}}" type="success" size='20' color="{{item.done?'#d7d7d7':'#6fa6cf'}}" />
+        <icon class="ico-delete" bindtap="toDelete" data-id="{{item.id}}" type='cancel' size='20' color="#6fa6cf" />
+    </view>
+    <view class="footer">
+        <view class="ft-area">
+            <text>{{todoData.lists.length}}条</text>
+        </view>
+         <view class="ft-area ft-mid">
+            <text wx:if="{{ todoData.showAll }}" bindtap="showUnfinished" class="ft-action">显示未完成</text>
+            <text wx:else bindtap="showAll" class="ft-action">显示全部</text>
+        </view>
+        <view class="ft-area">
+            <text bindtap="doneAll" class="ft-action">全部完成</text>
+            <text bindtap="deleteAll" class="ft-action">全删</text>
+        </view>
+    </view>
+  </view>
+  <audio class="voiceHidden" src="{{todoData.src}}" id="myAudio" controls="false"></audio>
+  <!--
+  <view class="input-wrap mt" wx:if="{{todoData.lists.length>0}}">
+    <button class="btn btn-save" bindtap="saveData">保存数据</button>
+  </view>
+  -->
+</view>   
